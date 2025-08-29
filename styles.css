@@ -1,0 +1,60 @@
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+        }
+        /* テーブルの入力欄のスタイル */
+        .input-cell {
+            padding: 0;
+            border: 1px solid #e2e8f0;
+            width: 80px;
+        }
+        .input-cell input {
+            width: 100%;
+            height: 100%;
+            padding: 0.5rem;
+            text-align: center;
+            border: none;
+            outline: none;
+            background-color: transparent;
+        }
+        .header-cell {
+            padding: 0.5rem;
+            background-color: #f8fafc;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .fund-name-cell {
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+            min-width: 200px;
+            font-weight: 500;
+            background-color: #f8fafc;
+        }
+        /* ボタンのスタイル */
+        .calc-button {
+            transition: all 0.3s ease;
+        }
+        .calc-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        /* 強調表示用のセル */
+        .highlight-cell {
+            background-color: #eef2ff; /* light-indigo */
+        }
+        .highlight-cell input {
+            background-color: #eef2ff;
+        }
+        .highlight-header {
+            background-color: #c7d2fe; /* darker-indigo */
+        }
+        /* 読み取り専用セルのスタイル */
+        .readonly-cell {
+            background-color: #f1f5f9;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .readonly-cell input {
+            background-color: #f1f5f9;
+        }

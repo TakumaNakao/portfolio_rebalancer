@@ -1,4 +1,4 @@
-import { loadState, saveState } from './state.js';
+import { loadState, saveState, STORAGE_KEY } from './state.js';
 import { parseInputs, calculateCurrentPortfolio, findOptimalAllocation, calculateFuturePortfolio } from './calculator.js';
 import { renderTables, displayPortfolio, displayProposal, uiUpdateFundName, uiAddFund, uiAddCountry, uiDeleteFund, uiDeleteCountry, autoCalculateOther, autoCalculateTargetOther } from './ui.js';
 
@@ -26,6 +26,7 @@ function setupEventListeners() {
     document.getElementById('add-fund-btn').addEventListener('click', uiAddFund);
     document.getElementById('add-country-btn').addEventListener('click', uiAddCountry);
     document.getElementById('calculate-btn').addEventListener('click', executeCalculation);
+    document.getElementById('reset-btn').addEventListener('click', resetApplication); // Added reset button listener
 }
 
 // --- 計算実行 ---
@@ -44,4 +45,12 @@ function executeCalculation() {
     displayPortfolio('future', '1ヶ月後のポートフォリオ', futurePortfolio, data.targets);
 
     document.getElementById('result-section').classList.remove('hidden');
+}
+
+// --- アプリケーションリセット ---
+function resetApplication() {
+    if (confirm('すべてのデータをリセットして初期状態に戻しますか？')) {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload(); // Reload the page to apply default state
+    }
 }

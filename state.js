@@ -1,6 +1,6 @@
 let funds = ['eMAXIS Slim 全世界株式', 'iFreeNEXT FANG+インデックス', 'eMAXIS Slim 新興国株式インデックス', 'SBI・V・先進国株式（除く米国）インデックス・ファンド', 'SBI・V・世界小型株式（除く米国）インデックス・ファンド'];
 let countries = ['日本', '米国', '欧州', '新興国', 'その他'];
-const STORAGE_KEY = 'portfolioRebalancerData';
+export const STORAGE_KEY = 'portfolioRebalancerData';
 
 export function getFunds() {
     return funds;

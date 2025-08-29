@@ -44,7 +44,7 @@ export function renderMainTable(savedState = {}) {
             }
         }).join('');
         
-        const assetValue = savedState.assets?.[fund] ?? 1000000;
+        const assetValue = savedState.assets?.[fund] ?? 0;
         rowHTML += `<td class="input-cell highlight-cell"><input type="number" id="asset-${fund}" value="${assetValue}"></td>`;
         row.innerHTML = rowHTML;
     });

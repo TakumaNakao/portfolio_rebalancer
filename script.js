@@ -366,6 +366,7 @@
         function findOptimalAllocation(data, currentPortfolio) {
             const { growthInvestment } = data;
 
+            // 投資額が0以下、またはファンドが存在しない場合は計算しない
             if (growthInvestment <= 0 || funds.length === 0) {
                 const allocation = {};
                 funds.forEach(f => allocation[f] = 0);
@@ -375,51 +376,53 @@
             const currentAllocation = {};
             funds.forEach(f => currentAllocation[f] = 0);
 
-            // 投資額を100個のチャンクに分割して、貪欲法で割り当てる
-            const chunks = 100;
-            const chunkAmount = growthInvestment / chunks;
+            const stepAmount = 100; // 100円単位で配分を決定する
+            let budgetRemaining = growthInvestment;
 
-            for (let i = 0; i < chunks; i++) {
+            // 予算がステップ額より大きい間、ループ処理
+            while (budgetRemaining >= stepAmount) {
                 let bestFundToAllocate = null;
                 let minError = Infinity;
 
-                // どのファンドにチャンクを割り当てると最も誤差が減るか評価する
+                // 次の100円をどのファンドに配分すると最も誤差が小さくなるか評価
                 for (const fund of funds) {
                     const tempAllocation = { ...currentAllocation };
-                    tempAllocation[fund] += chunkAmount;
+                    tempAllocation[fund] += stepAmount;
                     
-                    const error = calculateError(data, currentPortfolio, tempAllocation);
+                    const newError = calculateError(data, currentPortfolio, tempAllocation);
 
-                    if (error < minError) {
-                        minError = error;
+                    if (newError < minError) {
+                        minError = newError;
                         bestFundToAllocate = fund;
                     }
                 }
 
+                // 最も効果的だったファンドに、ステップ額を実際に配分する
                 if (bestFundToAllocate) {
-                    currentAllocation[bestFundToAllocate] += chunkAmount;
+                    currentAllocation[bestFundToAllocate] += stepAmount;
+                    budgetRemaining -= stepAmount;
+                } else {
+                    // どのファンドに配分しても誤差が悪化する場合（稀）はループを抜ける
+                    break; 
                 }
             }
 
-            // 金額を丸め、合計が投資額と一致するように調整する
-            let totalAllocated = 0;
-            funds.forEach(f => {
-                currentAllocation[f] = Math.round(currentAllocation[f]);
-                totalAllocated += currentAllocation[f];
-            });
-
-            let diff = growthInvestment - totalAllocated;
-            if (diff !== 0 && funds.length > 0) {
-                // 丸め誤差は、最も配分額の大きいファンドに加算して調整する
-                let fundToAdjust = funds[0];
-                let maxAmount = -1;
-                funds.forEach(f => {
-                    if (currentAllocation[f] > maxAmount) {
-                        maxAmount = currentAllocation[f];
-                        fundToAdjust = f;
+            // 100円未満の端数が残っている場合、最も効果的なファンドに割り振る
+            if (budgetRemaining > 0) {
+                let bestFundForRemainder = null;
+                let minErrorForRemainder = Infinity;
+                for (const fund of funds) {
+                    const tempAllocation = { ...currentAllocation };
+                    tempAllocation[fund] += budgetRemaining;
+                    const newError = calculateError(data, currentPortfolio, tempAllocation);
+                    if (newError < minErrorForRemainder) {
+                        minErrorForRemainder = newError;
+                        bestFundForRemainder = fund;
                     }
-                });
-                currentAllocation[fundToAdjust] += diff;
+                }
+                if (bestFundForRemainder) {
+                    currentAllocation[bestFundForRemainder] += budgetRemaining;
+                }
             }
 
             return currentAllocation;

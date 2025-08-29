@@ -49,9 +49,14 @@
             const savedStateJSON = localStorage.getItem(STORAGE_KEY);
             if (savedStateJSON) {
                 const savedState = JSON.parse(savedStateJSON);
-                // グローバル変数を上書き
-                if (savedState.funds) funds = savedState.funds;
-                if (savedState.countries) countries = savedState.countries;
+                
+                // 保存されたデータが有効な配列の場合のみグローバル変数を上書きする
+                if (Array.isArray(savedState.funds) && savedState.funds.length > 0) {
+                    funds = savedState.funds;
+                }
+                if (Array.isArray(savedState.countries) && savedState.countries.length > 0) {
+                    countries = savedState.countries;
+                }
                 
                 // テーブルを再描画
                 renderTables();

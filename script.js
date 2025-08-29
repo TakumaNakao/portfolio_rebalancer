@@ -13,15 +13,42 @@
         const STORAGE_KEY = 'portfolioRebalancerData';
 
         function saveState() {
+            const state = readStateFromDOM();
+            state.funds = funds;
+            state.countries = countries;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function loadState() {
+            const savedStateJSON = localStorage.getItem(STORAGE_KEY);
+            if (savedStateJSON) {
+                const savedState = JSON.parse(savedStateJSON);
+                
+                if (Array.isArray(savedState.funds) && savedState.funds.length > 0) {
+                    funds = savedState.funds;
+                }
+                if (Array.isArray(savedState.countries) && savedState.countries.length > 0) {
+                    countries = savedState.countries;
+                }
+                
+                renderTables(savedState);
+
+                document.getElementById('tsumitate-investment').value = savedState.tsumitateInvestment || '100000';
+                document.getElementById('growth-investment').value = savedState.growthInvestment || '100000';
+
+            } else {
+                renderTables();
+            }
+        }
+
+        function readStateFromDOM() {
             const state = {
-                funds,
-                countries,
                 assets: {},
                 compositions: {},
                 targets: {},
+                tsumitateAllocation: {},
                 tsumitateInvestment: document.getElementById('tsumitate-investment').value,
-                growthInvestment: document.getElementById('growth-investment').value,
-                tsumitateAllocation: {}
+                growthInvestment: document.getElementById('growth-investment').value
             };
 
             funds.forEach(fund => {
@@ -41,111 +68,60 @@
                 const targetInput = document.getElementById(`target-${country}`);
                 if (targetInput) state.targets[country] = targetInput.value;
             });
-
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        }
-
-        function loadState() {
-            const savedStateJSON = localStorage.getItem(STORAGE_KEY);
-            if (savedStateJSON) {
-                const savedState = JSON.parse(savedStateJSON);
-                
-                // 保存されたデータが有効な配列の場合のみグローバル変数を上書きする
-                if (Array.isArray(savedState.funds) && savedState.funds.length > 0) {
-                    funds = savedState.funds;
-                }
-                if (Array.isArray(savedState.countries) && savedState.countries.length > 0) {
-                    countries = savedState.countries;
-                }
-                
-                // テーブルを再描画
-                renderTables();
-
-                // 保存された値をフォームに設定
-                document.getElementById('tsumitate-investment').value = savedState.tsumitateInvestment || '100000';
-                document.getElementById('growth-investment').value = savedState.growthInvestment || '100000';
-
-                if (savedState.funds) {
-                    savedState.funds.forEach(fund => {
-                        const assetInput = document.getElementById(`asset-${fund}`);
-                        if (assetInput && savedState.assets) assetInput.value = savedState.assets[fund];
-
-                        const tsumitateAllocInput = document.getElementById(`tsumitate-alloc-${fund}`);
-                        if (tsumitateAllocInput && savedState.tsumitateAllocation) tsumitateAllocInput.value = savedState.tsumitateAllocation[fund];
-
-                        if (savedState.countries && savedState.compositions && savedState.compositions[fund]) {
-                            savedState.countries.forEach(country => {
-                                const compInput = document.querySelector(`input[data-fund="${fund}"][data-country="${country}"]`);
-                                if (compInput) compInput.value = savedState.compositions[fund][country];
-                            });
-                        }
-                    });
-                }
-
-                if (savedState.countries && savedState.targets) {
-                    savedState.countries.forEach(country => {
-                        const targetInput = document.getElementById(`target-${country}`);
-                        if (targetInput) targetInput.value = savedState.targets[country];
-                    });
-                }
-
-            } else {
-                // 保存されたデータがない場合は通常通り描画
-                renderTables();
-            }
+            return state;
         }
 
         // --- テーブル描画 ---
-        function renderTables() {
-            renderMainTable();
-            renderTsumitateAllocation();
+        function renderTables(savedState = {}) {
+            renderMainTable(savedState);
+            renderTsumitateAllocation(savedState);
         }
 
-        function renderMainTable() {
+        function renderMainTable(savedState = {}) {
             const table = document.getElementById('main-input-table');
-            table.innerHTML = ''; // テーブルをクリア
+            table.innerHTML = '';
+            const isInitialLoad = Object.keys(savedState).length === 0;
 
-            // ヘッダー
             const thead = table.createTHead();
             const headerRow = thead.insertRow();
             headerRow.innerHTML = `<th class="header-cell">投資信託 / 構成比(%)</th>` +
                 countries.map(c => `<th class="header-cell">${c}</th>`).join('') +
                 `<th class="header-cell highlight-header">保有資産額(円)</th>`;
 
-            // ボディ (各投資信託の行)
             const tbody = table.createTBody();
             funds.forEach(fund => {
                 const row = tbody.insertRow();
                 let rowHTML = `<td class="fund-name-cell"><input type="text" value="${fund}" class="w-full bg-transparent outline-none" onchange="updateFundName(this, '${fund}')"></td>`;
                 
                 rowHTML += countries.map(country => {
+                    const value = savedState.compositions?.[fund]?.[country] ?? getInitialComposition(fund, country);
                     if (country === 'その他') {
                         return `<td class="input-cell readonly-cell"><input type="number" data-fund="${fund}" data-country="${country}" value="0" readonly></td>`;
                     } else {
-                        return `<td class="input-cell"><input type="number" data-fund="${fund}" data-country="${country}" value="${getInitialComposition(fund, country)}" oninput="autoCalculateOther(this.closest('tr'))"></td>`;
+                        return `<td class="input-cell"><input type="number" data-fund="${fund}" data-country="${country}" value="${value}" oninput="autoCalculateOther(this.closest('tr'))"></td>`;
                     }
                 }).join('');
                 
-                rowHTML += `<td class="input-cell highlight-cell"><input type="number" id="asset-${fund}" value="1000000"></td>`;
+                const assetValue = savedState.assets?.[fund] ?? 1000000;
+                rowHTML += `<td class="input-cell highlight-cell"><input type="number" id="asset-${fund}" value="${assetValue}"></td>`;
                 row.innerHTML = rowHTML;
             });
 
-            // フッター (目標割合の行)
             const tfoot = table.createTFoot();
             const targetRow = tfoot.insertRow();
             let targetRowHTML = `<td class="fund-name-cell">目標割合 (%)</td>`;
             targetRowHTML += countries.map(c => {
-                const initialValue = (100 / countries.length).toFixed(1);
+                const defaultVal = isInitialLoad ? (100 / (countries.length-1)).toFixed(1) : 0;
+                const value = savedState.targets?.[c] ?? defaultVal;
                 if (c === 'その他') {
-                    return `<td class="input-cell highlight-cell readonly-cell"><input type="number" id="target-${c}" value="${initialValue}" readonly></td>`;
+                    return `<td class="input-cell highlight-cell readonly-cell"><input type="number" id="target-${c}" value="0" readonly></td>`;
                 } else {
-                    return `<td class="input-cell highlight-cell"><input type="number" id="target-${c}" value="${initialValue}" oninput="autoCalculateTargetOther()"></td>`;
+                    return `<td class="input-cell highlight-cell"><input type="number" id="target-${c}" value="${value}" oninput="autoCalculateTargetOther()"></td>`;
                 }
             }).join('');
-            targetRowHTML += `<td class="highlight-cell"></td>`; // 右端の空セル
+            targetRowHTML += `<td class="highlight-cell"></td>`;
             targetRow.innerHTML = targetRowHTML;
 
-            // 「その他」の初期値を計算
             tbody.querySelectorAll('tr').forEach(row => autoCalculateOther(row));
             autoCalculateTargetOther();
         }
@@ -188,14 +164,19 @@
             }
         }
 
-        function renderTsumitateAllocation() {
+        function renderTsumitateAllocation(savedState = {}) {
             const container = document.getElementById('tsumitate-allocation');
-            container.innerHTML = funds.map(fund => `
+            const isInitialLoad = Object.keys(savedState).length === 0;
+            const totalFunds = funds.length > 0 ? funds.length : 1;
+            container.innerHTML = funds.map(fund => {
+                const defaultVal = isInitialLoad ? (100 / totalFunds).toFixed(1) : 0;
+                const value = savedState.tsumitateAllocation?.[fund] ?? defaultVal;
+                return `
                 <div class="flex items-center justify-between">
                     <label for="tsumitate-alloc-${fund}" class="text-gray-600">${fund}</label>
-                    <input type="number" id="tsumitate-alloc-${fund}" class="w-20 text-right p-1 border rounded-md" value="${(100 / funds.length).toFixed(1)}">
+                    <input type="number" id="tsumitate-alloc-${fund}" class="w-20 text-right p-1 border rounded-md" value="${value}">
                 </div>
-            `).join('');
+            `}).join('');
         }
         
         // --- イベントリスナー設定 ---
@@ -209,19 +190,35 @@
         function updateFundName(inputElement, oldName) {
             const newName = inputElement.value.trim();
             if (newName && !funds.includes(newName)) {
+                const currentState = readStateFromDOM();
                 const index = funds.indexOf(oldName);
                 funds[index] = newName;
-                renderTables(); // 名前が変わったので全体を再描画
+
+                if(currentState.assets) {
+                    currentState.assets[newName] = currentState.assets[oldName];
+                    delete currentState.assets[oldName];
+                }
+                if(currentState.compositions) {
+                    currentState.compositions[newName] = currentState.compositions[oldName];
+                    delete currentState.compositions[oldName];
+                }
+                if(currentState.tsumitateAllocation) {
+                    currentState.tsumitateAllocation[newName] = currentState.tsumitateAllocation[oldName];
+                    delete currentState.tsumitateAllocation[oldName];
+                }
+
+                renderTables(currentState);
             } else {
-                inputElement.value = oldName; // 重複または空の場合は元に戻す
+                inputElement.value = oldName;
             }
         }
 
         function addFund() {
             const fundName = prompt('追加する投資信託名を入力してください:');
             if (fundName && !funds.includes(fundName)) {
+                const currentState = readStateFromDOM();
                 funds.push(fundName);
-                renderTables();
+                renderTables(currentState);
             } else if (fundName) {
                 alert('その名前は既に使用されています。');
             }
@@ -230,9 +227,9 @@
         function addCountry() {
             const countryName = prompt('追加する国・地域名を入力してください:');
             if (countryName && !countries.includes(countryName) && countryName !== 'その他') {
-                // 「その他」の前に新しい国を追加
+                const currentState = readStateFromDOM();
                 countries.splice(countries.length - 1, 0, countryName);
-                renderTables();
+                renderTables(currentState);
             } else if (countryName) {
                 alert('その名前は既に使用されているか、予約されています。');
             }
@@ -240,20 +237,17 @@
         
         // --- 計算実行 ---
         function executeCalculation() {
-            saveState(); // 計算実行時に現在の状態を保存
+            saveState();
             const data = parseInputs();
             if (!data) return;
 
-            // 1. 現状分析
             const currentPortfolio = calculateCurrentPortfolio(data);
             displayPortfolio('current', '現在のポートフォリオ', currentPortfolio, data.targets);
 
-            // 2. 最適化計算
-            const optimalAllocation = findOptimalAllocation(data, currentPortfolio);
-            displayProposal(optimalAllocation, data.growthInvestment);
+            const greedyAllocation = findOptimalAllocation(data, currentPortfolio);
+            displayProposal(greedyAllocation, data.growthInvestment);
 
-            // 3. 1ヶ月後予測
-            const futurePortfolio = calculateFuturePortfolio(data, currentPortfolio, optimalAllocation);
+            const futurePortfolio = calculateFuturePortfolio(data, currentPortfolio, greedyAllocation);
             displayPortfolio('future', '1ヶ月後のポートフォリオ', futurePortfolio, data.targets);
 
             document.getElementById('result-section').classList.remove('hidden');
@@ -279,7 +273,6 @@
                 }
             });
             if(validationError) return null;
-
 
             const assets = {};
             funds.forEach(fund => {
@@ -344,7 +337,6 @@
                 byCountry: { ...currentPortfolio.byCountry }
             };
 
-            // つみたて投資枠の加算
             funds.forEach(fund => {
                 const tsumitateAmount = data.tsumitateInvestment * data.tsumitateAllocation[fund];
                 countries.forEach(country => {
@@ -352,7 +344,6 @@
                 });
             });
 
-            // 成長投資枠の加算
             funds.forEach(fund => {
                 const growthAmount = growthAllocation[fund] || 0;
                 countries.forEach(country => {
@@ -366,7 +357,6 @@
         function findOptimalAllocation(data, currentPortfolio) {
             const { growthInvestment } = data;
 
-            // 投資額が0以下、またはファンドが存在しない場合は計算しない
             if (growthInvestment <= 0 || funds.length === 0) {
                 const allocation = {};
                 funds.forEach(f => allocation[f] = 0);
@@ -376,15 +366,13 @@
             const currentAllocation = {};
             funds.forEach(f => currentAllocation[f] = 0);
 
-            const stepAmount = 100; // 100円単位で配分を決定する
+            const stepAmount = 100;
             let budgetRemaining = growthInvestment;
 
-            // 予算がステップ額より大きい間、ループ処理
             while (budgetRemaining >= stepAmount) {
                 let bestFundToAllocate = null;
                 let minError = Infinity;
 
-                // 次の100円をどのファンドに配分すると最も誤差が小さくなるか評価
                 for (const fund of funds) {
                     const tempAllocation = { ...currentAllocation };
                     tempAllocation[fund] += stepAmount;
@@ -397,17 +385,14 @@
                     }
                 }
 
-                // 最も効果的だったファンドに、ステップ額を実際に配分する
                 if (bestFundToAllocate) {
                     currentAllocation[bestFundToAllocate] += stepAmount;
                     budgetRemaining -= stepAmount;
                 } else {
-                    // どのファンドに配分しても誤差が悪化する場合（稀）はループを抜ける
                     break; 
                 }
             }
 
-            // 100円未満の端数が残っている場合、最も効果的なファンドに割り振る
             if (budgetRemaining > 0) {
                 let bestFundForRemainder = null;
                 let minErrorForRemainder = Infinity;
@@ -533,5 +518,8 @@
                 '先進国（除く米国）': { '日本': 20, '米国': 0, '欧州': 60, '新興国': 10 },
                 '世界小型株（除くインデックス）': { '日本': 10, '米国': 30, '欧州': 30, '新興国': 20 }
             };
-            return compositions[fund] ? (compositions[fund][country] || 0) : 0;
+            if (!compositions[fund] || !compositions[fund][country]) {
+                return 0;
+            }
+            return compositions[fund][country];
         }

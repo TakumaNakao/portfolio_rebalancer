@@ -359,47 +359,65 @@
 
         // --- 最適化アルゴリズム ---
         function findOptimalAllocation(data, currentPortfolio) {
-            const { growthInvestment } = data;
-            let bestAllocation = {};
-            funds.forEach(f => bestAllocation[f] = growthInvestment / funds.length); // 初期値は均等配分
-            let minError = calculateError(data, currentPortfolio, bestAllocation);
+            const { growthInvestment, funds } = data;
 
-            const iterations = 30000;
-            const step = Math.max(1, growthInvestment / 1000); 
+            if (growthInvestment <= 0 || funds.length === 0) {
+                const allocation = {};
+                funds.forEach(f => allocation[f] = 0);
+                return allocation;
+            }
 
-            for (let i = 0; i < iterations; i++) {
-                const tempAllocation = { ...bestAllocation };
-                
-                if (funds.length < 2) break;
-                const fund1 = funds[Math.floor(Math.random() * funds.length)];
-                const fund2 = funds[Math.floor(Math.random() * funds.length)];
-                if (fund1 === fund2) continue;
+            const currentAllocation = {};
+            funds.forEach(f => currentAllocation[f] = 0);
 
-                if (tempAllocation[fund1] >= step) {
-                    tempAllocation[fund1] -= step;
-                    tempAllocation[fund2] += step;
+            // 投資額を100個のチャンクに分割して、貪欲法で割り当てる
+            const chunks = 100;
+            const chunkAmount = growthInvestment / chunks;
 
-                    const currentError = calculateError(data, currentPortfolio, tempAllocation);
-                    if (currentError < minError) {
-                        minError = currentError;
-                        bestAllocation = tempAllocation;
+            for (let i = 0; i < chunks; i++) {
+                let bestFundToAllocate = null;
+                let minError = Infinity;
+
+                // どのファンドにチャンクを割り当てると最も誤差が減るか評価する
+                for (const fund of funds) {
+                    const tempAllocation = { ...currentAllocation };
+                    tempAllocation[fund] += chunkAmount;
+                    
+                    const error = calculateError(data, currentPortfolio, tempAllocation);
+
+                    if (error < minError) {
+                        minError = error;
+                        bestFundToAllocate = fund;
                     }
                 }
-            }
-            
-            let total = 0;
-            funds.forEach(f => {
-                bestAllocation[f] = Math.round(bestAllocation[f]);
-                total += bestAllocation[f];
-            });
-            
-            let diff = growthInvestment - total;
-            if (diff !== 0 && funds.length > 0) {
-                const fundToAdjust = funds[Math.floor(Math.random() * funds.length)];
-                bestAllocation[fundToAdjust] += diff;
+
+                if (bestFundToAllocate) {
+                    currentAllocation[bestFundToAllocate] += chunkAmount;
+                }
             }
 
-            return bestAllocation;
+            // 金額を丸め、合計が投資額と一致するように調整する
+            let totalAllocated = 0;
+            funds.forEach(f => {
+                currentAllocation[f] = Math.round(currentAllocation[f]);
+                totalAllocated += currentAllocation[f];
+            });
+
+            let diff = growthInvestment - totalAllocated;
+            if (diff !== 0 && funds.length > 0) {
+                // 丸め誤差は、最も配分額の大きいファンドに加算して調整する
+                let fundToAdjust = funds[0];
+                let maxAmount = -1;
+                funds.forEach(f => {
+                    if (currentAllocation[f] > maxAmount) {
+                        maxAmount = currentAllocation[f];
+                        fundToAdjust = f;
+                    }
+                });
+                currentAllocation[fundToAdjust] += diff;
+            }
+
+            return currentAllocation;
         }
         
         function calculateError(data, currentPortfolio, growthAllocation) {

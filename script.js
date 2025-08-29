@@ -1,6 +1,6 @@
 import { loadState, saveState, STORAGE_KEY } from './state.js';
 import { parseInputs, calculateCurrentPortfolio, findOptimalAllocation, calculateFuturePortfolio } from './calculator.js';
-import { renderTables, displayPortfolio, displayProposal, uiUpdateFundName, uiAddFund, uiAddCountry, uiDeleteFund, uiDeleteCountry, autoCalculateOther, autoCalculateTargetOther } from './ui.js';
+import { renderTables, displayPortfolio, displayProposal, uiUpdateFundName, uiAddFund, uiAddCountry, uiDeleteFund, uiDeleteCountry, autoCalculateOther, autoCalculateTargetOther, handleCheckboxClick } from './ui.js';
 
 // Attach UI functions to the window object for direct calls from HTML onclick attributes
 window.uiUpdateFundName = uiUpdateFundName;
@@ -10,6 +10,7 @@ window.uiDeleteFund = uiDeleteFund;
 window.uiDeleteCountry = uiDeleteCountry;
 window.autoCalculateOther = autoCalculateOther;
 window.autoCalculateTargetOther = autoCalculateTargetOther;
+window.handleCheckboxClick = handleCheckboxClick;
 
 
 // --- 初期化処理 ---

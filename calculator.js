@@ -52,6 +52,9 @@ export function parseInputs() {
         return null;
     }
 
+    const priorityFundInput = document.querySelector('input[name="priority-fund"]:checked');
+    const priorityFund = priorityFundInput ? priorityFundInput.value : null;
+
     return {
         compositions,
         assets,
@@ -59,6 +62,7 @@ export function parseInputs() {
         tsumitateInvestment: parseFloat(document.getElementById('tsumitate-investment').value) || 0,
         tsumitateAllocation,
         growthInvestment: parseFloat(document.getElementById('growth-investment').value) || 0,
+        priorityFund
     };
 }
 
@@ -107,15 +111,9 @@ export function calculateFuturePortfolio(data, currentPortfolio, growthAllocatio
     return futurePortfolio;
 }
 
-export function findOptimalAllocation(data, currentPortfolio) {
+function originalFindOptimalAllocation(data, currentPortfolio) {
     const funds = getFunds();
     const { growthInvestment } = data;
-
-    if (growthInvestment <= 0 || funds.length === 0) {
-        const allocation = {};
-        funds.forEach(f => allocation[f] = 0);
-        return allocation;
-    }
 
     const currentAllocation = {};
     funds.forEach(f => currentAllocation[f] = 0);
@@ -161,6 +159,92 @@ export function findOptimalAllocation(data, currentPortfolio) {
         }
         if (bestFundForRemainder) {
             currentAllocation[bestFundForRemainder] += budgetRemaining;
+        }
+    }
+
+    return currentAllocation;
+}
+
+export function findOptimalAllocation(data, currentPortfolio) {
+    const funds = getFunds();
+    const { growthInvestment, priorityFund } = data;
+
+    if (growthInvestment <= 0 || funds.length === 0) {
+        const allocation = {};
+        funds.forEach(f => allocation[f] = 0);
+        return allocation;
+    }
+
+    // 優先ファンドが指定されていない、またはリストにない場合は元のアルゴリズムを実行
+    if (!priorityFund || !funds.includes(priorityFund)) {
+        return originalFindOptimalAllocation(data, currentPortfolio);
+    }
+
+    // --- 新しいアルゴリズム ---
+
+    // 1. ベース割り当て: 全額を優先ファンドに
+    const currentAllocation = {};
+    funds.forEach(f => currentAllocation[f] = 0);
+    currentAllocation[priorityFund] = growthInvestment;
+
+    const stepAmount = 100; // 100円単位で移動
+    let amountToMove = growthInvestment;
+
+    // 2. 補正: 資金を少しずつ移動させて最適化
+    while (amountToMove >= stepAmount) {
+        let bestFundToMoveTo = null;
+        // 現在の配分での誤差を基準とする
+        let minError = calculateError(data, currentPortfolio, currentAllocation);
+        let bestAllocationAfterMove = null;
+
+        // 優先ファンド以外のファンドに資金を移動させることを試す
+        for (const otherFund of funds.filter(f => f !== priorityFund)) {
+            const tempAllocation = { ...currentAllocation };
+            tempAllocation[priorityFund] -= stepAmount;
+            tempAllocation[otherFund] += stepAmount;
+
+            const newError = calculateError(data, currentPortfolio, tempAllocation);
+
+            if (newError < minError) {
+                minError = newError;
+                bestFundToMoveTo = otherFund;
+                bestAllocationAfterMove = tempAllocation;
+            }
+        }
+
+        if (bestFundToMoveTo) {
+            // 最も誤差を改善する移動を実行
+            Object.assign(currentAllocation, bestAllocationAfterMove);
+            amountToMove -= stepAmount;
+        } else {
+            // これ以上どのファンドに移動しても誤差が改善しない
+            break;
+        }
+    }
+
+    // 3. 端数処理
+    const remainder = amountToMove;
+    if (remainder > 0 && remainder < stepAmount) {
+        let bestFundToMoveToForRemainder = null;
+        let minErrorForRemainder = calculateError(data, currentPortfolio, currentAllocation);
+        let bestAllocationForRemainder = null;
+
+        for (const otherFund of funds.filter(f => f !== priorityFund)) {
+            const tempAllocation = { ...currentAllocation };
+            if (tempAllocation[priorityFund] < remainder) continue; // 移動元資金が足りない場合はスキップ
+
+            tempAllocation[priorityFund] -= remainder;
+            tempAllocation[otherFund] += remainder;
+
+            const newError = calculateError(data, currentPortfolio, tempAllocation);
+            if (newError < minErrorForRemainder) {
+                minErrorForRemainder = newError;
+                bestFundToMoveToForRemainder = otherFund;
+                bestAllocationForRemainder = tempAllocation;
+            }
+        }
+        if (bestFundToMoveToForRemainder) {
+            Object.assign(currentAllocation, bestAllocationForRemainder);
         }
     }
 

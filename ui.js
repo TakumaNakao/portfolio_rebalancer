@@ -16,7 +16,7 @@ export function renderMainTable(savedState = {}) {
 
     const thead = table.createTHead();
     const headerRow = thead.insertRow();
-    headerRow.innerHTML = `<th class="header-cell">投資信託 / 構成比(%)</th>` +
+    headerRow.innerHTML = `<th class="header-cell" title="最適化計算で優先するファンドを1つ選択できます。クリックで選択・解除できます。">優先 / 投資信託</th>` +
         countries.map(c => {
             const deleteBtn = (c !== 'その他' && countries.length > 2)
                 ? `<button class="delete-btn" onclick="uiDeleteCountry('${c}')" title="削除">×</button>`
@@ -28,10 +28,12 @@ export function renderMainTable(savedState = {}) {
     const tbody = table.createTBody();
     funds.forEach(fund => {
         const row = tbody.insertRow();
+        const isChecked = savedState.priorityFund === fund ? 'checked' : '';
         let rowHTML = `<td class="fund-name-cell">
             <div class="flex items-center">
+                <input type="checkbox" name="priority-fund" value="${fund}" class="mr-2 focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" ${isChecked} onclick="handleCheckboxClick(this)">
                 <input type="text" value="${fund}" class="flex-grow bg-transparent outline-none" onchange="uiUpdateFundName(this, '${fund}')">
-                <button class="delete-btn mr-2" onclick="uiDeleteFund('${fund}')" title="削除">×</button>
+                <button class="delete-btn ml-2" onclick="uiDeleteFund('${fund}')" title="削除">×</button>
             </div>
         </td>`;
         
@@ -243,6 +245,9 @@ export function uiDeleteFund(fundName) {
             if(currentState.assets) delete currentState.assets[fundName];
             if(currentState.compositions) delete currentState.compositions[fundName];
             if(currentState.tsumitateAllocation) delete currentState.tsumitateAllocation[fundName];
+            if (currentState.priorityFund === fundName) {
+                delete currentState.priorityFund;
+            }
             renderTables(currentState);
         }
     }
@@ -263,5 +268,16 @@ export function uiDeleteCountry(countryName) {
             if(currentState.targets) delete currentState.targets[countryName];
             renderTables(currentState);
         }
+    }
+}
+
+export function handleCheckboxClick(checkbox) {
+    if (checkbox.checked) {
+        // 他のチェックボックスをすべて外す
+        document.querySelectorAll('input[name="priority-fund"]').forEach(cb => {
+            if (cb !== checkbox) {
+                cb.checked = false;
+            }
+        });
     }
 }

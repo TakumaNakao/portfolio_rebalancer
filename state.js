@@ -40,7 +40,8 @@ export function readStateFromDOM() {
         targets: {},
         tsumitateAllocation: {},
         tsumitateInvestment: document.getElementById('tsumitate-investment').value,
-        growthInvestment: document.getElementById('growth-investment').value
+        growthInvestment: document.getElementById('growth-investment').value,
+        priorityFund: document.querySelector('input[name="priority-fund"]:checked')?.value
     };
 
     funds.forEach(fund => {
@@ -83,6 +84,12 @@ export function updateFundName(inputElement, oldName) {
             currentState.tsumitateAllocation[newName] = currentState.tsumitateAllocation[oldName];
             delete currentState.tsumitateAllocation[oldName];
         }
+
+        // Update priorityFund if it was the one renamed
+        if (currentState.priorityFund === oldName) {
+            currentState.priorityFund = newName;
+        }
+
         return currentState; // Return updated state to be used for re-rendering
     } else {
         inputElement.value = oldName; // Revert input if name is invalid or exists

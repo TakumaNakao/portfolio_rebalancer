@@ -165,9 +165,90 @@
 
         // --- 初期化処理 ---
         document.addEventListener('DOMContentLoaded', () => {
-            renderTables();
+            loadState(); // データを読み込んでから描画
             setupEventListeners();
         });
+
+        // --- ローカルストレージ関連 ---
+        const STORAGE_KEY = 'portfolioRebalancerData';
+
+        function saveState() {
+            const state = {
+                funds,
+                countries,
+                assets: {},
+                compositions: {},
+                targets: {},
+                tsumitateInvestment: document.getElementById('tsumitate-investment').value,
+                growthInvestment: document.getElementById('growth-investment').value,
+                tsumitateAllocation: {}
+            };
+
+            funds.forEach(fund => {
+                const assetInput = document.getElementById(`asset-${fund}`);
+                if (assetInput) state.assets[fund] = assetInput.value;
+
+                state.compositions[fund] = {};
+                countries.forEach(country => {
+                    const input = document.querySelector(`input[data-fund="${fund}"][data-country="${country}"]`);
+                    if (input) state.compositions[fund][country] = input.value;
+                });
+                const tsumitateInput = document.getElementById(`tsumitate-alloc-${fund}`);
+                if (tsumitateInput) state.tsumitateAllocation[fund] = tsumitateInput.value;
+            });
+
+            countries.forEach(country => {
+                const targetInput = document.getElementById(`target-${country}`);
+                if (targetInput) state.targets[country] = targetInput.value;
+            });
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function loadState() {
+            const savedStateJSON = localStorage.getItem(STORAGE_KEY);
+            if (savedStateJSON) {
+                const savedState = JSON.parse(savedStateJSON);
+                // グローバル変数を上書き
+                if (savedState.funds) funds = savedState.funds;
+                if (savedState.countries) countries = savedState.countries;
+                
+                // テーブルを再描画
+                renderTables();
+
+                // 保存された値をフォームに設定
+                document.getElementById('tsumitate-investment').value = savedState.tsumitateInvestment || '100000';
+                document.getElementById('growth-investment').value = savedState.growthInvestment || '100000';
+
+                if (savedState.funds) {
+                    savedState.funds.forEach(fund => {
+                        const assetInput = document.getElementById(`asset-${fund}`);
+                        if (assetInput && savedState.assets) assetInput.value = savedState.assets[fund];
+
+                        const tsumitateAllocInput = document.getElementById(`tsumitate-alloc-${fund}`);
+                        if (tsumitateAllocInput && savedState.tsumitateAllocation) tsumitateAllocInput.value = savedState.tsumitateAllocation[fund];
+
+                        if (savedState.countries && savedState.compositions && savedState.compositions[fund]) {
+                            savedState.countries.forEach(country => {
+                                const compInput = document.querySelector(`input[data-fund="${fund}"][data-country="${country}"]`);
+                                if (compInput) compInput.value = savedState.compositions[fund][country];
+                            });
+                        }
+                    });
+                }
+
+                if (savedState.countries && savedState.targets) {
+                    savedState.countries.forEach(country => {
+                        const targetInput = document.getElementById(`target-${country}`);
+                        if (targetInput) targetInput.value = savedState.targets[country];
+                    });
+                }
+
+            } else {
+                // 保存されたデータがない場合は通常通り描画
+                renderTables();
+            }
+        }
 
         // --- テーブル描画 ---
         function renderTables() {
@@ -314,6 +395,7 @@
         
         // --- 計算実行 ---
         function executeCalculation() {
+            saveState(); // 計算実行時に現在の状態を保存
             const data = parseInputs();
             if (!data) return;
 

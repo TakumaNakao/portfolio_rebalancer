@@ -85,13 +85,23 @@
             const thead = table.createTHead();
             const headerRow = thead.insertRow();
             headerRow.innerHTML = `<th class="header-cell">投資信託 / 構成比(%)</th>` +
-                countries.map(c => `<th class="header-cell">${c}</th>`).join('') +
+                countries.map(c => {
+                    const deleteBtn = (c !== 'その他' && countries.length > 2)
+                        ? `<button class="delete-btn" onclick="deleteCountry('${c}')" title="削除">×</button>`
+                        : '';
+                    return `<th class="header-cell">${c} ${deleteBtn}</th>`;
+                }).join('') +
                 `<th class="header-cell highlight-header">保有資産額(円)</th>`;
 
             const tbody = table.createTBody();
             funds.forEach(fund => {
                 const row = tbody.insertRow();
-                let rowHTML = `<td class="fund-name-cell"><input type="text" value="${fund}" class="w-full bg-transparent outline-none" onchange="updateFundName(this, '${fund}')"></td>`;
+                let rowHTML = `<td class="fund-name-cell">
+                    <div class="flex items-center">
+                        <button class="delete-btn mr-2" onclick="deleteFund('${fund}')" title="削除">×</button>
+                        <input type="text" value="${fund}" class="flex-grow bg-transparent outline-none" onchange="updateFundName(this, '${fund}')">
+                    </div>
+                </td>`;
                 
                 rowHTML += countries.map(country => {
                     const value = savedState.compositions?.[fund]?.[country] ?? getInitialComposition(fund, country);
@@ -232,6 +242,39 @@
                 renderTables(currentState);
             } else if (countryName) {
                 alert('その名前は既に使用されているか、予約されています。');
+            }
+        }
+
+        function deleteFund(fundName) {
+            if (confirm(`「${fundName}」を削除しますか？`)) {
+                const currentState = readStateFromDOM();
+                const index = funds.indexOf(fundName);
+                if (index > -1) {
+                    funds.splice(index, 1);
+                    if(currentState.assets) delete currentState.assets[fundName];
+                    if(currentState.compositions) delete currentState.compositions[fundName];
+                    if(currentState.tsumitateAllocation) delete currentState.tsumitateAllocation[fundName];
+                    renderTables(currentState);
+                }
+            }
+        }
+
+        function deleteCountry(countryName) {
+            if (confirm(`「${countryName}」を削除しますか？`)) {
+                const currentState = readStateFromDOM();
+                const index = countries.indexOf(countryName);
+                if (index > -1) {
+                    countries.splice(index, 1);
+                    if(currentState.compositions) {
+                        funds.forEach(fund => {
+                            if(currentState.compositions[fund]) {
+                                delete currentState.compositions[fund][countryName];
+                            }
+                        });
+                    }
+                    if(currentState.targets) delete currentState.targets[countryName];
+                    renderTables(currentState);
+                }
             }
         }
         

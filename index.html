@@ -208,12 +208,20 @@
             const tfoot = table.createTFoot();
             const targetRow = tfoot.insertRow();
             let targetRowHTML = `<td class="fund-name-cell">目標割合 (%)</td>`;
-            targetRowHTML += countries.map(c => `<td class="input-cell highlight-cell"><input type="number" id="target-${c}" value="${(100 / countries.length).toFixed(1)}"></td>`).join('');
+            targetRowHTML += countries.map(c => {
+                const initialValue = (100 / countries.length).toFixed(1);
+                if (c === 'その他') {
+                    return `<td class="input-cell highlight-cell readonly-cell"><input type="number" id="target-${c}" value="${initialValue}" readonly></td>`;
+                } else {
+                    return `<td class="input-cell highlight-cell"><input type="number" id="target-${c}" value="${initialValue}" oninput="autoCalculateTargetOther()"></td>`;
+                }
+            }).join('');
             targetRowHTML += `<td class="highlight-cell"></td>`; // 右端の空セル
             targetRow.innerHTML = targetRowHTML;
 
             // 「その他」の初期値を計算
             tbody.querySelectorAll('tr').forEach(row => autoCalculateOther(row));
+            autoCalculateTargetOther();
         }
 
         function autoCalculateOther(row) {
@@ -229,6 +237,25 @@
                 }
             });
 
+            if (otherInput) {
+                const otherValue = 100 - total;
+                otherInput.value = otherValue.toFixed(1);
+            }
+        }
+
+        function autoCalculateTargetOther() {
+            let total = 0;
+            const otherInput = document.getElementById('target-その他');
+
+            countries.forEach(country => {
+                if (country !== 'その他') {
+                    const input = document.getElementById(`target-${country}`);
+                    if (input) {
+                        total += parseFloat(input.value) || 0;
+                    }
+                }
+            });
+        
             if (otherInput) {
                 const otherValue = 100 - total;
                 otherInput.value = otherValue.toFixed(1);

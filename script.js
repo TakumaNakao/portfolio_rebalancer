@@ -359,7 +359,7 @@
 
         // --- 最適化アルゴリズム ---
         function findOptimalAllocation(data, currentPortfolio) {
-            const { growthInvestment, funds } = data;
+            const { growthInvestment } = data;
 
             if (growthInvestment <= 0 || funds.length === 0) {
                 const allocation = {};

@@ -57,12 +57,12 @@ function updateThemeIcons() {
     const lightIcon = document.getElementById('theme-icon-light');
     const darkIcon = document.getElementById('theme-icon-dark');
     if (isDark) {
-function updateThemeIcons() {
-    const isDark = document.documentElement.classList.contains('dark');
-    const lightIcon = document.getElementById('theme-icon-light');
-    const darkIcon = document.getElementById('theme-icon-dark');
-    lightIcon.classList.toggle('hidden', !isDark);
-    darkIcon.classList.toggle('hidden', isDark);
+        lightIcon.classList.remove('hidden');
+        darkIcon.classList.add('hidden');
+    } else {
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+    }
 }
 // --- 計算実行 ---
 function executeCalculation() {

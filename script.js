@@ -15,6 +15,15 @@ window.handleCheckboxClick = handleCheckboxClick;
 
 // --- 初期化処理 ---
 document.addEventListener('DOMContentLoaded', () => {
+    // localStorageからテーマを読み込み、適用
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+    updateThemeIcons();
+
     const savedState = loadState(); // データを読み込んでから描画
     renderTables(savedState); // Pass savedState to renderTables
     document.getElementById('tsumitate-investment').value = savedState.tsumitateInvestment || '100000';
@@ -27,7 +36,33 @@ function setupEventListeners() {
     document.getElementById('add-fund-btn').addEventListener('click', uiAddFund);
     document.getElementById('add-country-btn').addEventListener('click', uiAddCountry);
     document.getElementById('calculate-btn').addEventListener('click', executeCalculation);
-    document.getElementById('reset-btn').addEventListener('click', resetApplication); // Added reset button listener
+    document.getElementById('reset-btn').addEventListener('click', resetApplication);
+    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+}
+
+// --- テーマ管理 ---
+function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateThemeIcons();
+    
+    // 計算結果が表示されている場合のみ、グラフを再描画するために再計算
+    if (!document.getElementById('result-section').classList.contains('hidden')) {
+        executeCalculation();
+    }
+}
+
+function updateThemeIcons() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const lightIcon = document.getElementById('theme-icon-light');
+    const darkIcon = document.getElementById('theme-icon-dark');
+    if (isDark) {
+        lightIcon.classList.remove('hidden');
+        darkIcon.classList.add('hidden');
+    } else {
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+    }
 }
 
 // --- 計算実行 ---

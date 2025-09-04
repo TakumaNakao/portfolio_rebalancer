@@ -75,3 +75,95 @@
             color: #b91c1c; /* red-700 */
             background-color: #fee2e2; /* red-100 */
         }
+
+        /* --- Dark Mode --- */
+        .dark body {
+            background-color: #111827; /* gray-900 */
+            color: #d1d5db; /* gray-300 */
+        }
+        .dark header h1 {
+            color: #f9fafb; /* gray-50 */
+        }
+        .dark header p {
+            color: #9ca3af; /* gray-400 */
+        }
+        .dark section {
+            background-color: #1f2937; /* gray-800 */
+        }
+        .dark h2, .dark h3 {
+            color: #f9fafb; /* gray-50 */
+            border-color: #374151; /* gray-700 */
+        }
+        .dark .header-cell {
+            background-color: #374151; /* gray-700 */
+        }
+        .dark .fund-name-cell {
+            background-color: #374151; /* gray-700 */
+            border-color: #4b5563; /* gray-600 */
+        }
+        .dark .input-cell {
+            border-color: #4b5563; /* gray-600 */
+        }
+        .dark .input-cell input {
+            color: #f9fafb; /* gray-50 */
+        }
+        .dark .readonly-cell, .dark .readonly-cell input {
+            background-color: #374151; /* gray-700 */
+            color: #9ca3af; /* gray-400 */
+        }
+        .dark .highlight-cell, .dark .highlight-cell input {
+            background-color: #312e81; /* indigo-900 */
+        }
+        .dark .highlight-header {
+            background-color: #4338ca; /* indigo-700 */
+        }
+        .dark #rebalance-proposal li {
+            background-color: #374151; /* gray-700 */
+        }
+        .dark #rebalance-proposal .font-medium {
+            color: #f9fafb; /* gray-50 */
+        }
+        .dark #rebalance-proposal .font-semibold {
+            color: #a5b4fc; /* indigo-300 */
+        }
+        .dark .bg-gray-100 {
+            background-color: #374151; /* gray-700 */
+        }
+        .dark label {
+            color: #d1d5db; /* gray-300 */
+        }
+        .dark input[type="number"], .dark input[type="text"] {
+            background-color: #4b5563; /* gray-600 */
+            border-color: #6b7280; /* gray-500 */
+            color: #f9fafb; /* gray-50 */
+        }
+        .dark footer {
+            color: #9ca3af; /* gray-400 */
+        }
+        .dark .delete-btn {
+            color: #f87171; /* red-400 */
+        }
+        .dark .delete-btn:hover {
+            color: #fca5a5; /* red-300 */
+            background-color: #450a0a; /* red-900 */
+        }
+        .dark #current-portfolio-summary, .dark #future-portfolio-summary {
+            color: #d1d5db; /* gray-300 */
+        }
+        .dark .border-b, .dark .border-t {
+            border-color: #4b5563; /* gray-600 */
+        }
+        .dark .text-green-600 {
+            color: #34d399; /* green-400 */
+        }
+        .dark .text-red-600 {
+            color: #f87171; /* red-400 */
+        }
+        .dark #tsumitate-allocation label {
+            color: #d1d5db; /* gray-300 */
+        }
+        .dark #tsumitate-allocation input {
+            background-color: #4b5563; /* gray-600 */
+            border-color: #6b7280; /* gray-500 */
+            color: #f9fafb; /* gray-50 */
+        }

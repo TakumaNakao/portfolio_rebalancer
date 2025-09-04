@@ -9,6 +9,7 @@ permissions:
   pull-requests: write
   deployments: write
   id-token: write
+  pages: write
 
 jobs:
   deploy:

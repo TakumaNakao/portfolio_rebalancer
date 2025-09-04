@@ -1,0 +1,52 @@
+name: 'PR Preview Deployment'
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  deployments: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
+
+      - name: 'Setup GitHub Pages'
+        uses: actions/configure-pages@v4
+
+      - name: 'Upload artifact'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # プロジェクトルートをそのままアップロード
+
+      - name: 'Deploy to GitHub Pages'
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: 'Find Previous Comment'
+        uses: peter-evans/find-comment@v3
+        id: find_comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '🚀 Preview deployment is ready!'
+
+      - name: 'Create or Update Comment'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            🚀 Preview deployment is ready!
+
+            You can view the changes from this PR here:
+            ${{ steps.deployment.outputs.page_url }}
+          edit-mode: replace

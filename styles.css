@@ -77,81 +77,98 @@
         }
 
         /* --- Dark Mode --- */
-        @media (prefers-color-scheme: dark) {
-  body {
-    background-color: #222;
-    color: #f1f1f1;
-  }
+.dark body {
+  background-color: #111827; /* gray-900 */
+  color: #d1d5db; /* gray-300 */
+}
 
-  .container {
-    background-color: #333;
-    border-color: #555;
-  }
+.dark .container {
+  background-color: #1f2937; /* gray-800 */
+  border-color: #374151; /* gray-700 */
+}
 
-  h1,
-  h2 {
-    color: #f1f1f1;
-  }
+.dark h1,
+.dark h2 {
+  color: #f3f4f6; /* gray-100 */
+}
 
-  table {
-    border-color: #555;
-  }
+.dark table {
+  border-color: #374151; /* gray-700 */
+}
 
-  th,
-  td {
-    border-color: #555;
-  }
+.dark th,
+.dark td {
+  border-color: #374151; /* gray-700 */
+}
 
-  th {
-    background-color: #444;
-    color: #f1f1f1;
-  }
+.dark .header-cell,
+.dark .fund-name-cell {
+    background-color: #374151; /* gray-700 */
+    color: #f3f4f6; /* gray-100 */
+}
 
-  input[type="text"],
-  input[type="number"] {
-    background-color: #444;
-    color: #f1f1f1;
-    border: 1px solid #666;
-  }
+.dark .input-cell input {
+    background-color: #1f2937; /* gray-800 */
+    color: #f3f4f6; /* gray-100 */
+}
 
-  button {
-    background-color: #555;
-    color: #f1f1f1;
-    border-color: #777;
-  }
+.dark .highlight-cell,
+.dark .highlight-cell input {
+    background-color: #312e81; /* indigo-900 */
+}
 
-  button:hover {
-    background-color: #666;
-  }
+.dark .highlight-header {
+    background-color: #4338ca; /* indigo-800 */
+}
 
-  #result {
-    background-color: #333;
-    border-color: #555;
-  }
+.dark .readonly-cell,
+.dark .readonly-cell input {
+    background-color: #374151; /* gray-700 */
+    color: #9ca3af; /* gray-400 */
+}
 
-  /* Fix for hardcoded colors in JS */
-  #rebalance-proposal li,
-  .bg-white {
-    background-color: #444 !important;
-  }
+.dark button {
+  background-color: #374151; /* gray-700 */
+  color: #f3f4f6; /* gray-100 */
+  border-color: #4b5563; /* gray-600 */
+}
 
-  .text-gray-800 {
-    color: #f1f1f1 !important;
-  }
+.dark button:hover {
+  background-color: #4b5563; /* gray-600 */
+}
 
-  .text-indigo-700 {
-    color: #818cf8 !important; /* A lighter indigo for dark mode */
-  }
+.dark .delete-btn:hover {
+    color: #fca5a5; /* red-300 */
+    background-color: #374151; /* gray-700 */
+}
 
-  .bg-gray-200 {
-    background-color: #555 !important;
-  }
+.dark #result-section {
+  background-color: #1f2937; /* gray-800 */
+  border-color: #374151; /* gray-700 */
+}
 
-  .text-green-600 {
-    color: #4ade80 !important; /* Lighter green */
-  }
+/* Fix for hardcoded colors in JS */
+.dark #rebalance-proposal li,
+.dark .bg-white {
+  background-color: #374151 !important; /* gray-700 */
+}
 
-  .text-red-600 {
-    color: #f87171 !important; /* Lighter red */
-  }
+.dark .text-gray-800 {
+  color: #f3f4f6 !important; /* gray-100 */
+}
+
+.dark .text-indigo-700 {
+  color: #a5b4fc !important; /* indigo-300 */
+}
+
+.dark .bg-gray-200 {
+  background-color: #4b5563 !important; /* gray-600 */
+}
+
+.dark .text-green-600 {
+  color: #86efac !important; /* green-300 */
+}
+
+.dark .text-red-600 {
+  color: #fca5a5 !important; /* red-300 */
 }

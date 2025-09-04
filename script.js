@@ -64,7 +64,7 @@ function updateThemeIcons() {
         darkIcon.classList.remove('hidden');
     }
 }
-// --- 計算実行 ---
+
 function executeCalculation() {
     saveState();
     const data = parseInputs();

@@ -406,6 +406,7 @@ function calculateError(data, currentPortfolio, growthAllocation) {
     let error = 0;
 
     countriesList.forEach(country => {
+        if (country === 'その他') return; // Skip 'Others' for optimization
         const futureRatio = futurePortfolio.totalAsset > 0 ? futurePortfolio.byCountry[country] / futurePortfolio.totalAsset : 0;
         const targetRatio = data.targets[country];
         error += Math.pow(futureRatio - targetRatio, 2);

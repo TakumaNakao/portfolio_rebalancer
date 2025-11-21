@@ -21,7 +21,7 @@ export function parseInputs() {
             validationError = true;
         }
     });
-    if(validationError) return null;
+    if (validationError) return null;
 
     const assets = {};
     funds.forEach(fund => {
@@ -39,7 +39,7 @@ export function parseInputs() {
         alert(`目標割合の合計が100%になりません。(現在: ${targetTotal.toFixed(1)}%)`);
         return null;
     }
-    
+
     const tsumitateAllocation = {};
     let tsumitateTotal = 0;
     funds.forEach(fund => {
@@ -128,7 +128,7 @@ function originalFindOptimalAllocation(data, currentPortfolio) {
         for (const fund of funds) {
             const tempAllocation = { ...currentAllocation };
             tempAllocation[fund] += stepAmount;
-            
+
             const newError = calculateError(data, currentPortfolio, tempAllocation);
 
             if (newError < minError) {
@@ -141,7 +141,7 @@ function originalFindOptimalAllocation(data, currentPortfolio) {
             currentAllocation[bestFundToAllocate] += stepAmount;
             budgetRemaining -= stepAmount;
         } else {
-            break; 
+            break;
         }
     }
 
@@ -257,6 +257,7 @@ export function calculateError(data, currentPortfolio, growthAllocation) {
     let error = 0;
 
     countries.forEach(country => {
+        if (country === 'その他') return; // Skip 'Others' for optimization
         const futureRatio = futurePortfolio.totalAsset > 0 ? futurePortfolio.byCountry[country] / futurePortfolio.totalAsset : 0;
         const targetRatio = data.targets[country];
         error += Math.pow(futureRatio - targetRatio, 2);

@@ -47,7 +47,7 @@ export function renderMainTable(savedState = {}) {
         }).join('');
 
         const assetValue = savedState.assets?.[fund] ?? 0;
-        rowHTML += `<td class="input-cell highlight-cell dark:bg-slate-700 dark:border-slate-600"><input type="number" id="asset-${fund}" value="${assetValue}" class="dark:bg-slate-700 dark:text-white"></td>`;
+        rowHTML += `<td class="input-cell highlight-cell dark:bg-slate-700 dark:border-slate-600"><input type="text" id="asset-${fund}" value="${assetValue}" class="dark:bg-slate-700 dark:text-white" onchange="evaluateMathExpression(this)"></td>`;
         row.innerHTML = rowHTML;
     });
 
@@ -287,3 +287,37 @@ export function handleCheckboxClick(checkbox) {
         });
     }
 }
+
+export function evaluateMathExpression(inputElement) {
+    const value = inputElement.value;
+    // 半角数字、四則演算記号、括弧、ドット、スペース以外が含まれていないかチェック
+    if (!/^[0-9+\-*/().\s]+$/.test(value)) {
+        // 数値としてパースできるか試す（普通の数値入力の場合）
+        if (isNaN(parseFloat(value))) {
+            return; // 無効な文字が含まれていて、かつ数値でもない場合は何もしない
+        }
+    }
+
+    try {
+        // Functionコンストラクタを使用して安全に評価
+        const result = new Function('return ' + value)();
+        if (isFinite(result)) {
+            inputElement.value = Math.floor(result); // 整数に丸める
+            // 変更イベントを手動で発火させて、保存処理などをトリガーする
+            inputElement.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    } catch (e) {
+        console.error('計算エラー:', e);
+    }
+}
+
+// Attach UI functions to the window object for direct calls from HTML onclick attributes
+window.uiUpdateFundName = uiUpdateFundName;
+window.uiAddFund = uiAddFund;
+window.uiAddCountry = uiAddCountry;
+window.uiDeleteFund = uiDeleteFund;
+window.uiDeleteCountry = uiDeleteCountry;
+window.autoCalculateOther = autoCalculateOther;
+window.autoCalculateTargetOther = autoCalculateTargetOther;
+window.handleCheckboxClick = handleCheckboxClick;
+window.evaluateMathExpression = evaluateMathExpression;

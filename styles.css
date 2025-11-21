@@ -1,174 +1,222 @@
-        body {
-            font-family: 'Inter', 'Noto Sans JP', sans-serif;
-        }
-        /* テーブルの入力欄のスタイル */
-        .input-cell {
-            padding: 0;
-            border: 1px solid #e2e8f0;
-            width: 80px;
-        }
-        .input-cell input {
-            width: 100%;
-            height: 100%;
-            padding: 0.5rem;
-            text-align: center;
-            border: none;
-            outline: none;
-            background-color: transparent;
-        }
-        .header-cell {
-            padding: 0.5rem;
-            background-color: #f8fafc;
-            font-weight: 600;
-            text-align: center;
-            white-space: nowrap;
-        }
-        .fund-name-cell {
-            padding: 0.5rem;
-            border: 1px solid #e2e8f0;
-            text-align: left;
-            min-width: 200px;
-            font-weight: 500;
-            background-color: #f8fafc;
-        }
-        /* ボタンのスタイル */
-        .calc-button {
-            transition: all 0.3s ease;
-        }
-        .calc-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        /* 強調表示用のセル */
-        .highlight-cell {
-            background-color: #eef2ff; /* light-indigo */
-        }
-        .highlight-cell input {
-            background-color: #eef2ff;
-        }
-        .highlight-header {
-            background-color: #c7d2fe; /* darker-indigo */
-        }
-        /* 読み取り専用セルのスタイル */
-        .readonly-cell {
-            background-color: #f1f5f9;
-            color: #64748b;
-            font-weight: 500;
-        }
-        .readonly-cell input {
-            background-color: #f1f5f9;
-        }
+body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+}
 
-        /* 削除ボタンのスタイル */
-        .delete-btn {
-            background: none;
-            border: none;
-            color: #ef4444; /* red-500 */
-            cursor: pointer;
-            font-weight: bold;
-            padding: 0 0.25rem;
-            border-radius: 4px;
-            font-size: 1.1rem;
-            line-height: 1;
-        }
-        .delete-btn:hover {
-            color: #b91c1c; /* red-700 */
-            background-color: #fee2e2; /* red-100 */
-        }
+/* テーブルの入力欄のスタイル */
+.input-cell {
+    padding: 0;
+    border: 1px solid #e2e8f0;
+    width: 80px;
+}
 
-        /* --- Dark Mode --- */
+.input-cell input {
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
+    text-align: center;
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.header-cell {
+    padding: 0.5rem;
+    background-color: #f8fafc;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.fund-name-cell {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+    min-width: 200px;
+    font-weight: 500;
+    background-color: #f8fafc;
+}
+
+/* ボタンのスタイル */
+.calc-button {
+    transition: all 0.3s ease;
+}
+
+.calc-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 強調表示用のセル */
+.highlight-cell {
+    background-color: #eef2ff;
+    /* light-indigo */
+}
+
+.highlight-cell input {
+    background-color: #eef2ff;
+}
+
+.highlight-header {
+    background-color: #c7d2fe;
+    /* darker-indigo */
+}
+
+/* 読み取り専用セルのスタイル */
+.readonly-cell {
+    background-color: #f1f5f9;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.readonly-cell input {
+    background-color: #f1f5f9;
+}
+
+/* 削除ボタンのスタイル */
+.delete-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    /* red-500 */
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0 0.25rem;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.delete-btn:hover {
+    color: #b91c1c;
+    /* red-700 */
+    background-color: #fee2e2;
+    /* red-100 */
+}
+
+/* --- Dark Mode --- */
 .dark body {
-  background-color: #111827; /* gray-900 */
-  color: #d1d5db; /* gray-300 */
+    background-color: #0f172a;
+    /* slate-900 */
+    color: #cbd5e1;
+    /* slate-300 */
 }
 
 .dark .container {
-  background-color: #1f2937; /* gray-800 */
-  border-color: #374151; /* gray-700 */
+    background-color: #1e293b;
+    /* slate-800 */
+    border-color: #334155;
+    /* slate-700 */
 }
 
 .dark h1,
 .dark h2 {
-  color: #f3f4f6; /* gray-100 */
+    color: #f1f5f9;
+    /* slate-100 */
 }
 
 .dark table {
-  border-color: #374151; /* gray-700 */
+    border-color: #334155;
+    /* slate-700 */
 }
 
 .dark th,
 .dark td {
-  border-color: #374151; /* gray-700 */
+    border-color: #334155;
+    /* slate-700 */
 }
 
 .dark .header-cell,
 .dark .fund-name-cell {
-    background-color: #374151; /* gray-700 */
-    color: #f3f4f6; /* gray-100 */
+    background-color: #1e293b;
+    /* slate-800 */
+    color: #f1f5f9;
+    /* slate-100 */
+    border-color: #334155;
+    /* slate-700 */
 }
 
 .dark .input-cell input {
-    background-color: #1f2937; /* gray-800 */
-    color: #f3f4f6; /* gray-100 */
+    background-color: #020617;
+    /* slate-950 */
+    color: #f1f5f9;
+    /* slate-100 */
 }
 
 .dark .highlight-cell,
 .dark .highlight-cell input {
-    background-color: #312e81; /* indigo-900 */
+    background-color: #1e1b4b;
+    /* indigo-950 */
 }
 
 .dark .highlight-header {
-    background-color: #4338ca; /* indigo-800 */
+    background-color: #312e81;
+    /* indigo-900 */
 }
 
 .dark .readonly-cell,
 .dark .readonly-cell input {
-    background-color: #374151; /* gray-700 */
-    color: #9ca3af; /* gray-400 */
+    background-color: #334155;
+    /* slate-700 */
+    color: #94a3b8;
+    /* slate-400 */
 }
 
 .dark button {
-  background-color: #374151; /* gray-700 */
-  color: #f3f4f6; /* gray-100 */
-  border-color: #4b5563; /* gray-600 */
+    background-color: #334155;
+    /* slate-700 */
+    color: #f1f5f9;
+    /* slate-100 */
+    border-color: #475569;
+    /* slate-600 */
 }
 
 .dark button:hover {
-  background-color: #4b5563; /* gray-600 */
+    background-color: #475569;
+    /* slate-600 */
 }
 
 .dark .delete-btn:hover {
-    color: #fca5a5; /* red-300 */
-    background-color: #374151; /* gray-700 */
+    color: #fca5a5;
+    /* red-300 */
+    background-color: #334155;
+    /* slate-700 */
 }
 
 .dark #result-section {
-  background-color: #1f2937; /* gray-800 */
-  border-color: #374151; /* gray-700 */
+    background-color: #1e293b;
+    /* slate-800 */
+    border-color: #334155;
+    /* slate-700 */
 }
 
 /* Fix for hardcoded colors in JS */
 .dark #rebalance-proposal li,
 .dark .bg-white {
-  background-color: #374151 !important; /* gray-700 */
+    background-color: #1e293b !important;
+    /* slate-800 */
 }
 
 .dark .text-gray-800 {
-  color: #f3f4f6 !important; /* gray-100 */
+    color: #f1f5f9 !important;
+    /* slate-100 */
 }
 
 .dark .text-indigo-700 {
-  color: #a5b4fc !important; /* indigo-300 */
+    color: #a5b4fc !important;
+    /* indigo-300 */
 }
 
 .dark .bg-gray-200 {
-  background-color: #4b5563 !important; /* gray-600 */
+    background-color: #475569 !important;
+    /* slate-600 */
 }
 
 .dark .text-green-600 {
-  color: #86efac !important; /* green-300 */
+    color: #86efac !important;
+    /* green-300 */
 }
 
 .dark .text-red-600 {
-  color: #fca5a5 !important; /* red-300 */
+    color: #fca5a5 !important;
+    /* red-300 */
 }

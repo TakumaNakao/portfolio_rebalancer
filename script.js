@@ -1,3 +1,4 @@
+
 import { loadState, saveState, STORAGE_KEY } from './state.js';
 import { parseInputs, calculateCurrentPortfolio, findOptimalAllocation, calculateFuturePortfolio } from './calculator.js';
 import { renderTables, displayPortfolio, displayProposal, uiUpdateFundName, uiAddFund, uiAddCountry, uiDeleteFund, uiDeleteCountry, autoCalculateOther, autoCalculateTargetOther, handleCheckboxClick } from './ui.js';
@@ -45,7 +46,7 @@ function toggleTheme() {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
     updateThemeIcons();
-    
+
     // 計算結果が表示されている場合のみ、グラフを再描画するために再計算
     if (!document.getElementById('result-section').classList.contains('hidden')) {
         executeCalculation();

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,101 +17,129 @@
     <!-- Google Fonts (Inter) を読み込み -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-gray-50 text-gray-800">
+
+<body class="bg-gray-50 text-gray-800 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
     <div class="container mx-auto p-4 md:p-8">
         <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">投資信託リバランス提案アプリ</h1>
-            <p class="mt-2 text-gray-600">ポートフォリオを分析し、最適な投資配分を計算します。</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-slate-100">投資信託リバランス提案アプリ</h1>
+            <p class="mt-2 text-gray-600 dark:text-slate-400">ポートフォリオを分析し、最適な投資配分を計算します。</p>
         </header>
 
         <div class="flex justify-end mb-4">
-            <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 focus:outline-none" title="テーマを切り替え">
-                <svg id="theme-icon-light" class="w-6 h-6 text-gray-800 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="theme-icon-dark" class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            <button id="theme-toggle"
+                class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 focus:outline-none transition-colors"
+                title="テーマを切り替え">
+                <svg id="theme-icon-light" class="w-6 h-6 text-gray-800 hidden" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
+                </svg>
+                <svg id="theme-icon-dark" class="w-6 h-6 text-gray-800 dark:text-yellow-300" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                    </path>
+                </svg>
             </button>
         </div>
 
         <main class="space-y-8">
             <!-- 1. データ入力セクション -->
-            <section class="bg-white p-6 rounded-xl shadow-md">
-                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">1. データ入力</h2>
-                
+            <section class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md transition-colors duration-300">
+                <h2 class="text-2xl font-semibold mb-4 border-b dark:border-slate-700 pb-2 dark:text-slate-100">1. データ入力
+                </h2>
+
                 <div class="overflow-x-auto">
-                    <h3 class="text-lg font-semibold mb-2">ポートフォリオ構成と資産状況</h3>
+                    <h3 class="text-lg font-semibold mb-2 dark:text-slate-200">ポートフォリオ構成と資産状況</h3>
                     <table id="main-input-table" class="w-full border-collapse text-sm">
                         <!-- テーブル内容はJSで動的に生成 -->
                     </table>
                 </div>
                 <div class="mt-4 flex gap-2">
-                     <button id="add-fund-btn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-sm">投資信託を追加</button>
-                     <button id="add-country-btn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 text-sm">国・地域を追加</button>
+                    <button id="add-fund-btn"
+                        class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-sm transition-colors">投資信託を追加</button>
+                    <button id="add-country-btn"
+                        class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 text-sm transition-colors">国・地域を追加</button>
                 </div>
 
-                 <!-- NISA投資枠の設定 -->
+                <!-- NISA投資枠の設定 -->
                 <div class="mt-8">
-                    <h3 class="text-lg font-semibold mb-2">NISA投資枠の設定 (月額)</h3>
+                    <h3 class="text-lg font-semibold mb-2 dark:text-slate-200">NISA投資枠の設定 (月額)</h3>
                     <div class="grid sm:grid-cols-2 gap-4">
-                        <div class="bg-gray-100 p-4 rounded-lg">
-                            <label for="tsumitate-investment" class="block font-medium text-gray-700">つみたて投資枠</label>
-                            <input type="number" id="tsumitate-investment" value="100000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
-                            <p class="text-xs text-gray-500 mt-1">この金額が、以下の割合で自動的に積み立てられます。</p>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-4 rounded-lg transition-colors">
+                            <label for="tsumitate-investment"
+                                class="block font-medium text-gray-700 dark:text-slate-300">つみたて投資枠</label>
+                            <input type="number" id="tsumitate-investment" value="100000"
+                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 transition-colors">
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">この金額が、以下の割合で自動的に積み立てられます。</p>
                             <div id="tsumitate-allocation" class="mt-2 space-y-2 text-sm">
                                 <!-- つみたて割合入力欄はJSで動的に生成 -->
                             </div>
                         </div>
-                        <div class="bg-gray-100 p-4 rounded-lg">
-                            <label for="growth-investment" class="block font-medium text-gray-700">成長投資枠</label>
-                            <input type="number" id="growth-investment" value="100000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2">
-                            <p class="text-xs text-gray-500 mt-1">この金額の最適な配分を計算します。</p>
+                        <div class="bg-gray-100 dark:bg-slate-700 p-4 rounded-lg transition-colors">
+                            <label for="growth-investment"
+                                class="block font-medium text-gray-700 dark:text-slate-300">成長投資枠</label>
+                            <input type="number" id="growth-investment" value="100000"
+                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 transition-colors">
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">この金額の最適な配分を計算します。</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="text-center mt-8 space-x-4">
-                    <button id="calculate-btn" class="calc-button bg-indigo-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <button id="calculate-btn"
+                        class="calc-button bg-indigo-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-105 dark:bg-indigo-400 dark:text-slate-900 dark:hover:bg-indigo-300 dark:focus:ring-offset-slate-800">
                         計算を実行する
                     </button>
-                    <button id="reset-btn" class="calc-button bg-gray-400 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300">
+                    <button id="reset-btn"
+                        class="calc-button bg-gray-400 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-transform transform hover:scale-105 dark:bg-slate-200 dark:text-slate-800 dark:hover:bg-slate-100 dark:focus:ring-offset-slate-800">
                         リセット
                     </button>
                 </div>
             </section>
 
             <!-- 2. 計算結果セクション -->
-            <section id="result-section" class="bg-white p-6 rounded-xl shadow-md hidden">
-                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">2. 計算結果</h2>
+            <section id="result-section"
+                class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md hidden transition-colors duration-300">
+                <h2 class="text-2xl font-semibold mb-4 border-b dark:border-slate-700 pb-2 dark:text-slate-100">2. 計算結果
+                </h2>
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
                     <!-- 現在のポートフォリオ -->
                     <div class="text-center">
-                        <h3 class="text-lg font-semibold mb-2">現在 (As-Is)</h3>
+                        <h3 class="text-lg font-semibold mb-2 dark:text-slate-200">現在 (As-Is)</h3>
                         <div class="w-full h-64 mx-auto"><canvas id="current-pie-chart"></canvas></div>
                         <div id="current-portfolio-summary" class="mt-4 text-sm"></div>
                     </div>
                     <!-- 提案 -->
-                    <div class="lg:col-span-1 md:col-span-2 bg-indigo-50 p-6 rounded-lg">
-                        <h3 class="text-lg font-semibold mb-2 text-indigo-800">成長投資枠の最適配分案</h3>
-                        <p class="text-sm text-gray-600 mb-4">目標に近づけるための、今月の成長投資枠の購入プランです。</p>
+                    <div
+                        class="lg:col-span-1 md:col-span-2 bg-indigo-50 dark:bg-indigo-900/30 p-6 rounded-lg transition-colors">
+                        <h3 class="text-lg font-semibold mb-2 text-indigo-800 dark:text-indigo-300">成長投資枠の最適配分案</h3>
+                        <p class="text-sm text-gray-600 dark:text-slate-400 mb-4">目標に近づけるための、今月の成長投資枠の購入プランです。</p>
                         <div id="rebalance-proposal" class="space-y-2"></div>
                     </div>
                     <!-- 1ヶ月後のポートフォリオ -->
                     <div class="text-center">
-                        <h3 class="text-lg font-semibold mb-2">1ヶ月後 (To-Be)</h3>
+                        <h3 class="text-lg font-semibold mb-2 dark:text-slate-200">1ヶ月後 (To-Be)</h3>
                         <div class="w-full h-64 mx-auto"><canvas id="future-pie-chart"></canvas></div>
                         <div id="future-portfolio-summary" class="mt-4 text-sm"></div>
                     </div>
                 </div>
             </section>
         </main>
-        
-        <footer class="text-center mt-12 text-sm text-gray-500">
+
+        <footer class="text-center mt-12 text-sm text-gray-500 dark:text-slate-500">
             <p>&copy; 2024 Portfolio Rebalancer. All Rights Reserved.</p>
         </footer>
     </div>
 
-    <script src="script.js" type="module"></script>
+    <script src="app.js"></script>
 </body>
+
 </html>
